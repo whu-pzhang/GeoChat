@@ -19,7 +19,9 @@ import shutil
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, BitsAndBytesConfig
 import torch
 from geochat.model import *
-from geochat.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+from geochat.constants import (DEFAULT_IMAGE_PATCH_TOKEN,
+                               DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN,
+                               DEFAULT_IMAGE_TOKEN)
 
 
 def load_pretrained_model(model_path,
@@ -196,6 +198,7 @@ def load_pretrained_model(model_path,
                                       False)
         mm_use_im_patch_token = getattr(model.config, "mm_use_im_patch_token",
                                         True)
+
         if mm_use_im_patch_token:
             tokenizer.add_tokens([DEFAULT_IMAGE_PATCH_TOKEN],
                                  special_tokens=True)

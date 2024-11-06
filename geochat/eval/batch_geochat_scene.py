@@ -4,6 +4,7 @@ import os
 import json
 from tqdm import tqdm
 import shortuuid
+import math
 
 from geochat.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 from geochat.conversation import conv_templates, SeparatorStyle
@@ -13,7 +14,16 @@ from geochat.mm_utils import tokenizer_image_token, get_model_name_from_path, Ke
 
 from PIL import Image
 
-from .utils import get_chunk
+
+def split_list(lst, n):
+    """Split a list into n (roughly) equal-sized chunks"""
+    chunk_size = math.ceil(len(lst) / n)  # integer division
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
+
+def get_chunk(lst, n, k):
+    chunks = split_list(lst, n)
+    return chunks[k]
 
 
 def evaluation_metrics(data_path):
