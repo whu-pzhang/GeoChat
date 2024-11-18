@@ -20,7 +20,9 @@ import torch.nn as nn
 from .multimodal_encoder.builder import build_vision_tower
 from .multimodal_projector.builder import build_vision_projector
 
-from geochat.constants import IGNORE_INDEX, IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+from geochat.constants import (IGNORE_INDEX, IMAGE_TOKEN_INDEX,
+                               DEFAULT_IMAGE_PATCH_TOKEN,
+                               DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN)
 
 
 class GeoChatMetaModel:
@@ -29,7 +31,7 @@ class GeoChatMetaModel:
         super(GeoChatMetaModel, self).__init__(config)
 
         if hasattr(config, "mm_vision_tower"):
-            self.vision_tower = build_vision_tower(config, delay_load=False)
+            self.vision_tower = build_vision_tower(config, delay_load=True)
             self.mm_projector = build_vision_projector(config)
 
     def get_vision_tower(self):

@@ -18,6 +18,7 @@ import torch.backends.cudnn as cudnn
 from geochat.conversation import conv_templates, Chat
 from geochat.model.builder import load_pretrained_model
 from geochat.mm_utils import get_model_name_from_path
+from geochat.mm_utils import get_model_name_from_path
 
 
 def parse_args():
@@ -51,9 +52,6 @@ args = parse_args()
 # cfg = Config(args)
 
 model_name = get_model_name_from_path(args.model_path)
-print(args)
-print(model_name)
-
 tokenizer, model, image_processor, context_len = load_pretrained_model(
     args.model_path,
     args.model_base,

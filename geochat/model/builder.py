@@ -19,7 +19,9 @@ import shutil
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, BitsAndBytesConfig
 import torch
 from geochat.model import *
-from geochat.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+from geochat.constants import (DEFAULT_IMAGE_PATCH_TOKEN,
+                               DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN,
+                               DEFAULT_IMAGE_TOKEN)
 
 
 def load_pretrained_model(model_path,
@@ -43,7 +45,7 @@ def load_pretrained_model(model_path,
     else:
         kwargs['torch_dtype'] = torch.float16
 
-    if 'llava' in model_name.lower():
+    if 'geochat' in model_name.lower():
         # Load LLaVA model
         if 'lora' in model_name.lower() and model_base is None:
             warnings.warn(
@@ -53,8 +55,8 @@ def load_pretrained_model(model_path,
             lora_cfg_pretrained = AutoConfig.from_pretrained(model_path)
             tokenizer = AutoTokenizer.from_pretrained(model_base,
                                                       use_fast=False)
-            print('Loading LLaVA from base model...')
-            model = LlavaLlamaForCausalLM.from_pretrained(
+            print('Loading Geochat from base model...')
+            model = GeoChatLlamaForCausalLM.from_pretrained(
                 model_base,
                 low_cpu_mem_usage=True,
                 config=lora_cfg_pretrained,
@@ -72,7 +74,7 @@ def load_pretrained_model(model_path,
                                 device=model.device,
                                 dtype=model.dtype))
 
-            print('Loading additional LLaVA weights...')
+            print('Loading additional GeoChat weights...')
             if os.path.exists(
                     os.path.join(model_path, 'non_lora_trainables.bin')):
                 non_lora_trainables = torch.load(os.path.join(
@@ -109,7 +111,7 @@ def load_pretrained_model(model_path,
             print('Model is loaded...')
         elif model_base is not None:
             # this may be mm projector only
-            print('Loading LLaVA from base model...')
+            print('Loading GeoChat from base model...')
             if 'mpt' in model_name.lower():
                 if not os.path.isfile(
                         os.path.join(model_path, 'configuration_mpt.py')):
@@ -129,7 +131,7 @@ def load_pretrained_model(model_path,
                 tokenizer = AutoTokenizer.from_pretrained(model_base,
                                                           use_fast=False)
                 cfg_pretrained = AutoConfig.from_pretrained(model_path)
-                model = LlavaLlamaForCausalLM.from_pretrained(
+                model = GeoChatLlamaForCausalLM.from_pretrained(
                     model_base,
                     low_cpu_mem_usage=True,
                     config=cfg_pretrained,
@@ -150,6 +152,7 @@ def load_pretrained_model(model_path,
                 model = GeoChatMPTForCausalLM.from_pretrained(
                     model_path, low_cpu_mem_usage=True, **kwargs)
             else:
+                print("Loading GeoChat......")
                 tokenizer = AutoTokenizer.from_pretrained(model_path,
                                                           use_fast=False)
                 model = GeoChatLlamaForCausalLM.from_pretrained(
@@ -190,7 +193,7 @@ def load_pretrained_model(model_path,
 
     image_processor = None
 
-    if 'llava' in model_name.lower():
+    if 'geochat' in model_name.lower():
         mm_use_im_start_end = getattr(model.config, "mm_use_im_start_end",
                                       False)
         mm_use_im_patch_token = getattr(model.config, "mm_use_im_patch_token",
